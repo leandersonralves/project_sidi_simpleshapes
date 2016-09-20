@@ -26,16 +26,36 @@ public abstract class Car : MonoBehaviour
 
 	private Rigidbody m_rigidbody;
 
+	protected Transform m_transform;
+
 	void Awake ()
 	{
 		m_rigidbody = GetComponent<Rigidbody> ();
+		m_transform = transform;
+
+		bool wheelsOk = true;
+		if (turnableWheels == null || turnableWheels.Length < 1) {
+			Debug.LogError ("Not found turnables Wheels in Car (" + transform.root.name + ")");
+			wheelsOk = false;
+		}
+
+		if (wheelsWithTraction == null || wheelsWithTraction.Length < 1) {
+			Debug.LogError ("Not found Wheels with Traction in Car (" + transform.root.name + ")");
+			wheelsOk = false;
+		}
+
+		if (!wheelsOk)
+			Destroy (this);
 	}
 
 	protected void Acellerate (float valueNormalized)
 	{
-		float torque = Mathf.Clamp01 (valueNormalized) * maxTorque;
+		float torque = Mathf.Clamp (valueNormalized,-1f, 1f) * maxTorque;
 		for (int i = 0; i < wheelsWithTraction.Length; i++) {
 			wheelsWithTraction [i].motorTorque = torque;
+
+			if (wheelsWithTraction [i].brakeTorque != 0)
+				wheelsWithTraction [i].brakeTorque = 0;
 		}
 
 		if(m_rigidbody.velocity.magnitude > maxSpeed)
@@ -46,10 +66,11 @@ public abstract class Car : MonoBehaviour
 
 	protected void Brake ()
 	{
-		for (int i = 0; i < turnableWheels.Length; i++) {
-			turnableWheels [i].brakeTorque = brakeTorque;
-		}
+//		for (int i = 0; i < turnableWheels.Length; i++) {
+//			turnableWheels [i].brakeTorque = brakeTorque;
+//		}
 		for (int i = 0; i < wheelsWithTraction.Length; i++) {
+			wheelsWithTraction [i].motorTorque = 0f;
 			wheelsWithTraction [i].brakeTorque = brakeTorque;
 		}
 	}

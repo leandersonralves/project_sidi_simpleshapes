@@ -3,10 +3,6 @@ using System.Collections;
 
 public class Player : Car {
 	
-	void Start () {
-	
-	}
-
 	void Update () {
 		float accelerate = Input.GetAxis("Vertical");
 		if (!Mathf.Approximately (accelerate, 0f))
