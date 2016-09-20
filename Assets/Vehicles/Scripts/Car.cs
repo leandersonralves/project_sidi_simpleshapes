@@ -13,25 +13,36 @@ public abstract class Car : MonoBehaviour
 {
 	[SerializeField]
 	private float maxSpeed = 20f;
+
 	[SerializeField]
 	private float maxTorque = 20f;
+
 	[SerializeField]
 	private float brakeTorque = 150f;
+
 	[SerializeField]
 	private WheelCollider[] turnableWheels;
+
 	[SerializeField]
 	private float maxAngleWheel = 35f;
+
 	[SerializeField]
 	private WheelCollider[] wheelsWithTraction;
 
-	private Rigidbody m_rigidbody;
+    [SerializeField]
+    private Vector3 centerOfMass = new Vector3(0f, -1f, 0f);
+
+    private Rigidbody m_rigidbody;
 
 	protected Transform m_transform;
 
 	void Awake ()
 	{
 		m_rigidbody = GetComponent<Rigidbody> ();
-		m_transform = transform;
+        m_rigidbody.centerOfMass = centerOfMass;
+
+
+        m_transform = transform;
 
 		bool wheelsOk = true;
 		if (turnableWheels == null || turnableWheels.Length < 1) {
