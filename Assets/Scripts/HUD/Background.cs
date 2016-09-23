@@ -11,7 +11,7 @@ public class Background : MonoBehaviour
     public OnCompleteFade onCompleteFadeIn;
     public OnCompleteFade onCompleteFadeOut;
 
-    Coroutine fade;
+	IEnumerator fade;
     Image backgroundImage;
 
     void Awake ()
@@ -21,7 +21,12 @@ public class Background : MonoBehaviour
 
     public void Fade()
     {
-        fade = StartCoroutine(Fade(true));
+		if (fade != null) {
+			StopCoroutine (fade);
+		}
+
+		fade = Fade (true);
+        StartCoroutine(fade);
     }
     
     IEnumerator Fade (bool isIn)
@@ -37,7 +42,7 @@ public class Background : MonoBehaviour
 
         if (onCompleteFadeIn != null)
             onCompleteFadeIn.Invoke();
-        
+		
         //Fade Out
         backgroundImage.CrossFadeAlpha(0f, timeFade, true);
         timeLeft = 0f;

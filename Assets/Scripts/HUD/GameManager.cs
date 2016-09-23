@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
     }
 
     public void LoadScene(string sceneName)
-    {
+	{
+		Debug.Log ("Load Scene");
         nextSceneLoad = sceneName;
         background.Fade();
         background.onCompleteFadeIn = delegate () { SceneManager.LoadScene(sceneName); };
