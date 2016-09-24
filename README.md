@@ -15,3 +15,6 @@ A primeira é um jogo simples, as outras duas, servem apenas para demonstração
 Para pilotar a SUV use os **sliders** laterais.
 O slider da _esquerda_ controla a _aceleração_ frontal/ré.
 O slider da _direita_ controla a _direção_.
+
+### Problemas conhecidos: ###
+* O projeto foi desenvolvido em dois ambientes distintos, *Windows 10* e *Ubuntu 16.04 LTS*. Ocorreram problemas quando o projeto era atualizado em um sistema e em seguida aberto em outro, ocorriam *perda de referências* dos scripts, perda de referências dos scripts em Prefabs e até mesmo de Prefabs filhos com o Parent. Alterado o modo do Unity salvas os assets, para que *serialize* em formato *string* ao invés de *binário*, amenizou o problema, porém não sanou totalmente.
