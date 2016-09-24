@@ -38,10 +38,14 @@ public class Background : MonoBehaviour
     void Awake ()
     {
         backgroundImage = GetComponentInChildren<Image>();
+		var color = backgroundImage.color;
+		color.a = 1f;
+		backgroundImage.color = color;
+		StartCoroutine (FadeOut());
     }
 
     /// <summary>
-    /// Função que executa o Fade In e em seguida Fade Out do Background.
+    /// Função que executa o Fade In do Background.
     /// </summary>
     public void Fade()
     {
@@ -49,16 +53,16 @@ public class Background : MonoBehaviour
 			StopCoroutine (fade);
 		}
 
-		fade = Fading();
+		fade = FadeIn();
         StartCoroutine(fade);
     }
     
 
     /// <summary>
-    /// IEnumerator que executa o FadeIn e Out.
+    /// IEnumerator que executa o FadeIn.
     /// </summary>
     /// <returns>Não há retorno, função para Coroutines.</returns>
-    IEnumerator Fading ()
+    IEnumerator FadeIn ()
     {
         //Fade In
         Color m_color = backgroundImage.color;
@@ -73,18 +77,25 @@ public class Background : MonoBehaviour
 
         if (onCompleteFadeIn != null)
             onCompleteFadeIn.Invoke();
-		
-        //Fade Out
-        timeLeft = 0f;
-        while (timeLeft < timeFade)
-        {
-            timeLeft += Time.deltaTime;
-            m_color.a = (timeFade - timeLeft) / timeFade;
-            backgroundImage.color = m_color;
-            yield return null;
-        }
-
-        if (onCompleteFadeOut != null)
-            onCompleteFadeOut.Invoke();
     }
+
+	/// <summary>
+	/// IEnumerator que executa o FadeOut.
+	/// </summary>
+	/// <returns>Não há retorno, função para Coroutines.</returns>
+	IEnumerator FadeOut () 
+	{
+		float timeLeft = 0f;
+		var m_color = backgroundImage.color;
+		while (timeLeft < timeFade)
+		{
+			timeLeft += Time.deltaTime;
+			m_color.a = (timeFade - timeLeft) / timeFade;
+			backgroundImage.color = m_color;
+			yield return null;
+		}
+
+		if (onCompleteFadeOut != null)
+			onCompleteFadeOut.Invoke();
+	}
 }

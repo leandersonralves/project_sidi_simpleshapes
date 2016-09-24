@@ -77,7 +77,7 @@ public abstract class Car : MonoBehaviour
     /// <summary>
     /// "Saúde" do veículo.
     /// </summary>
-    protected float heath = 100f;
+	public float heath = 100f;
 
     /// <summary>
     /// O quão fraco é o carro para batidas.
@@ -87,7 +87,7 @@ public abstract class Car : MonoBehaviour
     private float weakness = 1f;
 
 
-    void Awake ()
+    protected void Awake ()
 	{
 		m_rigidbody = GetComponent<Rigidbody> ();
         m_rigidbody.centerOfMass = centerOfMass;
@@ -118,7 +118,7 @@ public abstract class Car : MonoBehaviour
     /// <param name="valueNormalized">Quantidade de aceleração. Valor entre de [0-1], 0 = nula e 1 = máxima.</param>
 	public void Acellerate (float valueNormalized)
 	{
-		float torque = Mathf.Clamp (valueNormalized,-1f, 1f) * maxTorque;
+		float torque = Mathf.Clamp (valueNormalized, -1f, 1f) * maxTorque;
 		for (int i = 0; i < wheelsWithTraction.Length; i++) {
 			wheelsWithTraction [i].motorTorque = torque;
 
@@ -151,11 +151,10 @@ public abstract class Car : MonoBehaviour
 	public void Turn (float valueNormalized)
 	{
         //Clamp do valor para que o veículo não vire além do limite.
-		valueNormalized = Mathf.Clamp(Mathf.Abs (valueNormalized), -1f, 1f);
+		valueNormalized = Mathf.Clamp(valueNormalized, -1f, 1f);
 
         float angle = maxAngleWheel * valueNormalized;
 
-		valueNormalized = Mathf.Clamp01 (valueNormalized);
 		for (int i = 0; i < turnableWheels.Length; i++) {
 			turnableWheels [i].steerAngle = angle;
 		}
@@ -167,10 +166,13 @@ public abstract class Car : MonoBehaviour
     /// <param name="colliderHitted"></param>
     public void OnCollisionEnter (Collision colliderHitted)
     {
+		if (heath <= 0)
+			return;
+
         if(colliderHitted.collider.tag == "Wall" || colliderHitted.collider.tag == "Player" || colliderHitted.collider.tag == "Enemy")
         {
             heath -= weakness;
-            if(weakness <= 0f)
+            if(heath <= 0f)
             {
                 Broke();
             }
@@ -180,6 +182,7 @@ public abstract class Car : MonoBehaviour
     //Quebra o veículo.
     public void Broke ()
     {
+		Debug.Log ("Broked car " + name);
         Acellerate(0f);
         Brake();
         smoke.Play();

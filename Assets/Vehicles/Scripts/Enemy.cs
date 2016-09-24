@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
@@ -32,10 +33,23 @@ public class Enemy : Car
 		Broked
 	}
 
+	/// <summary>
+	/// Referencia para o componente Text.
+	/// </summary>
+	public Text textHeath;
+
 	void Start () {
         //Inicia a máquina de estados da IA, não utilizado o evento Update,
         //pois é mais prático permanecer em um estado, utilizando Coroutines.
 		StartCoroutine (StateMachine());
+	}
+
+	void Update () {
+		textHeath.text = heath.ToString("000");
+
+		if (heath <= 0f)
+			state = State.Broked;
+			
 	}
 
     /// <summary>
@@ -104,7 +118,7 @@ public class Enemy : Car
 	IEnumerator Threatening ()
 	{
         Turn(0f);
-        Broke();
+		Brake();
 
 		float timeLeft = 4f;
 		while(timeLeft > 0f)
@@ -175,8 +189,6 @@ public class Enemy : Car
 		case State.Waiting:
 			if (DistanceToTarget <= 25f)
 				state = State.Chasing;
-			break;
-		default:
 			break;
 		}
 	}

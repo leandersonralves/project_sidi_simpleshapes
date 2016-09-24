@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
@@ -7,21 +8,33 @@ using System.Collections;
 public class Player : Car
 {
     //Quantidade de aceleração. [0-1]
-    public float accelerate = 0f;
+	[SerializeField]
+    private Slider accelerate;
 
     //Nível de esterçamento. [0-1]
-    public float turn = 0f;
+	[SerializeField]
+	private Slider turn;
+
+	void Awake ()
+	{
+		base.Awake ();
+
+		if (!accelerate || !turn) {
+			Debug.LogError ("Not found Sliders to control Player.");
+			Destroy (this);
+		}
+	}
 
     void Update () {
-		if (Mathf.Approximately (accelerate, 0f))
+		if (Mathf.Approximately (accelerate.value, 0f))
             Brake();
         else
-            Acellerate (accelerate);
+			Acellerate (accelerate.value);
 
-		if (Mathf.Approximately (turn, 0))
+		if (Mathf.Approximately (turn.value, 0))
 			Turn (0);
 		else
-            Turn (turn);
+			Turn (turn.value);
 
         if(heath <= 0)
         {

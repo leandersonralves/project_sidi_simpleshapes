@@ -45,7 +45,8 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
 
-        onChangeState(state);
+		if(onChangeState != null)
+        	onChangeState(state);
     }
 
     /// <summary>
@@ -65,14 +66,17 @@ public class GameManager : MonoBehaviour
 	{
         //Define o estado para Loading e chama o evento.
         state = GameState.Loading;
-        onChangeState(state);
+		if(onChangeState != null)
+        	onChangeState(state);
 
         background.Fade();
 
         background.onCompleteFadeIn = delegate () {
             SceneManager.LoadScene(sceneName);
             state = GameState.InGame;
-            onChangeState(state);
+
+			if(onChangeState != null)
+            	onChangeState(state);
         };
     }
 
@@ -82,7 +86,10 @@ public class GameManager : MonoBehaviour
     public void Quit ()
     {
         state = GameState.Quiting;
-        onChangeState(state);
+
+		if(onChangeState != null)
+        	onChangeState(state);
+		
         StartCoroutine(DelayedQuit());
     }
 

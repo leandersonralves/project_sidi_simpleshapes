@@ -3,7 +3,7 @@
 /// <summary>
 /// Classe com função de contralar um Tranform, fazendo-o seguir outro.
 /// </summary>
-public class CameraFollower : MonoBehaviour {
+public class Follower : MonoBehaviour {
 
     /// <summary>
     /// Se True, o transform seguirá o alvo transladando.
@@ -50,7 +50,7 @@ public class CameraFollower : MonoBehaviour {
 	void Awake () {
 	    if(!target)
         {
-            Debug.Log("Not found target in scrip CameraFollower in GameObject " + name);
+            Debug.Log("Not found target in scrip Follower in GameObject " + name);
             Destroy(this);
         }
 

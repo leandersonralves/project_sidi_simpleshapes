@@ -42,7 +42,7 @@
 		void surf (Input IN, inout SurfaceOutputStandardSpecular o) {
 
 			// Albedo comes from a texture tinted by color
-			fixed4 c = lerp(tex2D (_MainTex, IN.uv_MainTex), tex2D (_SecondTex, IN.uv_SecondTex), _LerpTextures) * _Color;
+			fixed4 c = lerp(tex2D (_MainTex, IN.uv_MainTex), tex2D (_SecondTex, IN.uv_SecondTex), _SinTime.w * .5 + .5) * _Color;
 			o.Albedo = c.rgb;
 			o.Specular = _Specular * tex2D(_SpecularMap, IN.uv_SpecularMap).a;
 			o.Normal = UnpackNormal (tex2D(_NormalMap, IN.uv_NormalMap));

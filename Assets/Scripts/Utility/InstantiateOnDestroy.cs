@@ -22,7 +22,14 @@ public class InstantiateOnDestroy : MonoBehaviour {
 
 		m_transform = transform;
 	}
-	
+
+	void Update ()
+	{
+		if (m_transform.hasChanged) {
+			OnDestroy ();
+		}
+	}
+
 	void OnDestroy () {
         //Instanciando os prefabs na posição deste transform.
 		for (int i = 0; i < prefabs.Length; i++) {
