@@ -1,25 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : Car {
-	
-	void Update () {
-		float accelerate = Input.GetAxis("Vertical");
-		if (!Mathf.Approximately (accelerate, 0f))
-			Acellerate (accelerate);
+/// <summary>
+/// Classe para controle do carro através de Inputs do jogador.
+/// </summary>
+public class Player : Car
+{
+    //Quantidade de aceleração. [0-1]
+    public float accelerate = 0f;
 
-		if (Input.GetKey (KeyCode.Space))
-			Brake ();
+    //Nível de esterçamento. [0-1]
+    public float turn = 0f;
 
-		float turn = Input.GetAxis("Horizontal");
+    void Update () {
+		if (Mathf.Approximately (accelerate, 0f))
+            Brake();
+        else
+            Acellerate (accelerate);
 
 		if (Mathf.Approximately (turn, 0))
-			Turn (TurnSide.Center, 0);
-		else {
-			if(turn > 0)
-				Turn (TurnSide.Right, turn);
-			else
-				Turn (TurnSide.Left, turn);
-		}
+			Turn (0);
+		else
+            Turn (turn);
+
+        if(heath <= 0)
+        {
+            Singletons.GetGameManager().LoadScene("tier_1");
+        }
 	}
 }

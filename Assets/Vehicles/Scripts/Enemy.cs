@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
+/// <summary>
+/// Classe para controle dos carros Inimigos.
+/// </summary>
 public class Enemy : Car
 {
+    /// <summary>
+    /// Distância para o Alvo.
+    /// </summary>
 	private float DistanceToTarget
 	{
 		get {
@@ -14,6 +19,9 @@ public class Enemy : Car
 		}
 	}
 
+    /// <summary>
+    /// Estado atual da IA do Carro.
+    /// </summary>
 	[SerializeField]
 	private State state;
 	private enum State
@@ -25,51 +33,79 @@ public class Enemy : Car
 	}
 
 	void Start () {
+        //Inicia a máquina de estados da IA, não utilizado o evento Update,
+        //pois é mais prático permanecer em um estado, utilizando Coroutines.
 		StartCoroutine (StateMachine());
 	}
 
+    /// <summary>
+    /// IEnumerator para atualização da máquina de estados.
+    /// </summary>
+    /// <returns></returns>
 	IEnumerator StateMachine () {
-		switch (state) {
-		case State.Chasing:
-			Chasing ();
-			CheckState ();
-			break;
-		case State.Threatening:
-			yield return StartCoroutine (Threatening ());
-			CheckState ();
-			break;
-		case State.Waiting:
-			Waiting ();
-			CheckState ();
-			break;
-		case State.Broked:
-			Broke ();
-			break;
-		}
+
+        while (state != State.Broked)
+        {
+            //Após sair de cada estado, é checado qual será o próximo estado.
+            switch (state)
+            {
+                case State.Chasing:
+                    Chasing();
+                    CheckState();
+                    break;
+                case State.Threatening:
+                    yield return StartCoroutine(Threatening());
+                    CheckState();
+                    break;
+                case State.Waiting:
+                    Waiting();
+                    CheckState();
+                    break;
+            }
+
+            yield return null;
+        }
+
+        Broke();
 	}
 
+    /// <summary>
+    /// Função que o veículo segue o alvo.
+    /// </summary>
 	void Chasing ()
 	{
 		Vector3 targetPosition = Singletons.GetPlayer().transform.position;
 		Vector3 actualPosition = m_transform.position;
 
+        //Checando a direção do alvo.
 		Vector3 targetDirection = (targetPosition - actualPosition).normalized;
 
+        //Checando se o alvo está à frente. Se estiver a frente, irá seguir reto.
 		if (Vector3.Dot (m_transform.forward, targetDirection) < 0.9) {
-			TurnSide sideTurn = TurnSide.Left;
-			if (Vector3.Dot (m_transform.right, targetDirection) > 0)
-				sideTurn = TurnSide.Right;
 
-			Turn (sideTurn, 1f);
+            //Checando se o alvo está mais a direita ou esquerda.
+            if (Vector3.Dot(m_transform.right, targetDirection) > 0)
+                Turn(1f);
+            else
+                Turn(-1f);
+
 		} else {
-			Turn (TurnSide.Center, 0f);
+			Turn (0f);
 		}
 
+        //Acelera o veículo.
 		Acellerate (1f);
 	}
 
+    /// <summary>
+    /// Função que o veículo fica "ameaçando", acelerando e freiando.
+    /// </summary>
+    /// <returns></returns>
 	IEnumerator Threatening ()
 	{
+        Turn(0f);
+        Broke();
+
 		float timeLeft = 4f;
 		while(timeLeft > 0f)
 		{
@@ -83,29 +119,44 @@ public class Enemy : Car
 		}
 	}
 
-	float timeTurning = 0f;
-	TurnSide sideToTurn = TurnSide.Left;
+    /// <summary>
+    /// Tempo que o veículo está virando para um dado lado, usado pela máquina de estados.
+    /// </summary>
+    private float timeTurning = 0f;
+
+    /// <summary>
+    /// Cache do última direção que o carro está virando.
+    /// </summary>
+    private bool isLeft = true;
+
+    /// <summary>
+    /// Função com o estado que o veículo fica andando e virando de um lado para o outro.
+    /// </summary>
 	void Waiting ()
 	{
-		float timeTurning = 0f;
-		TurnSide sideToTurn = TurnSide.Left;
 		Acellerate (0.2f);
 
+        //Checa o tempo que está virando para um lado, se for maior que 3 irá virar para o outro lado.
 		if (timeTurning >= 3f) {
 			timeTurning = 0f;
-			sideToTurn = sideToTurn == TurnSide.Left ? TurnSide.Right : TurnSide.Left;
+            isLeft = !isLeft;
 		}
 
-		Turn (sideToTurn, 0.7f);
+        if (isLeft)
+        {
+            Turn(-0.7f);
+        }
+        else
+        {
+            Turn(0.7f);
+        }
 
 		timeTurning += Time.deltaTime;
 	}
-
-	private void Broke ()
-	{
-
-	}
-
+    
+    /// <summary>
+    /// Checa o estado atual da máquina de estados e define qual deverá ser definido.
+    /// </summary>
 	private void CheckState ()
 	{
 		switch (state) {
