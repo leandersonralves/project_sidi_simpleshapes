@@ -12,6 +12,7 @@
 
 		pass {
 			CGPROGRAM
+			#pragma target 3.5
             #pragma vertex vert
             #pragma fragment frag
             
@@ -37,7 +38,8 @@
 			v2f vert (appdata v)
             {
 				v2f o;
-				fixed4 vertexAnim =  tex2D(_AnimTex, half2(_Time.y * 1 / _AnimSpeed,0));
+
+				half3 vertexAnim =  tex2D(_AnimTex, half2(_Time.y / _AnimSpeed,0));
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex + vertexAnim);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				return o;
