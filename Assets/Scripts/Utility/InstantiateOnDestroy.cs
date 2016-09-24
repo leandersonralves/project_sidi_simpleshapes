@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
 
+//Instancia a array de Prefabs quando o que possui este componente é destruído.
 public class InstantiateOnDestroy : MonoBehaviour {
 
+    /// <summary>
+    /// Prefabs a serem instanciados.
+    /// </summary>
 	[SerializeField]
 	protected GameObject[] prefabs;
-
-	protected Transform m_transform;
+    
+    /// <summary>
+    /// Cache do próprio Transform, fins de otimização.
+    /// </summary>
+    protected Transform m_transform;
 
 	void Awake () {
 		if (prefabs == null || prefabs.Length < 1) {
@@ -18,6 +24,7 @@ public class InstantiateOnDestroy : MonoBehaviour {
 	}
 	
 	void OnDestroy () {
+        //Instanciando os prefabs na posição deste transform.
 		for (int i = 0; i < prefabs.Length; i++) {
 			Instantiate(prefabs[i], m_transform.position, Quaternion.identity);
 		}
