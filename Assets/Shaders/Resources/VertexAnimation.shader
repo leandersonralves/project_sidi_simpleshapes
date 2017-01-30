@@ -12,7 +12,7 @@
 
 		pass {
 			CGPROGRAM
-			#pragma target 3.5
+			#pragma glsl
             #pragma vertex vert
             #pragma fragment frag
             
@@ -26,6 +26,7 @@
 			struct v2f {
                 float4 vertex : SV_POSITION;
 				float2 uv : TEXCOORD0;
+				float4 color : COLOR;
 			};
 
             float4 _MainTex_ST;
@@ -38,10 +39,11 @@
 			v2f vert (appdata v)
             {
 				v2f o;
-
-				half3 vertexAnim =  tex2D(_AnimTex, half2(_Time.y / _AnimSpeed,0));
+				
+				float3 vertexAnim =  tex2Dlod(_AnimTex, half4(1,0.5,0,0));
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex + vertexAnim);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+
 				return o;
             }
             
